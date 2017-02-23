@@ -15,7 +15,7 @@ public class RecentlyListService {
 	@Autowired
 	private RecentlyListDAO recentlyListDAO;
 	
-	public List<Map<String, Object>> getAll() {
-		return recentlyListDAO.selectAll();
+	public List<Map<String, Object>> getAll(int count) {
+		return recentlyListDAO.selectAll(count);
 	}
 }

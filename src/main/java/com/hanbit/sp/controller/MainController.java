@@ -21,7 +21,7 @@ public class MainController {
 	public List<Map<String, Object>> getSectionItems(
 			@PathVariable("sectionCode") String sectionCode) {
 		if ("01".equals(sectionCode)) {
-			return recentlyListService.getAll();	
+			return recentlyListService.getAll(9);	
 		}
 		
 		return new ArrayList<>();

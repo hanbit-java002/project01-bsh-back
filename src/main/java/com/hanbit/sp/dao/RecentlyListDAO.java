@@ -13,8 +13,8 @@ public class RecentlyListDAO {
 	@Autowired
 	private SqlSession sqlSession;
 	
-	public List<Map<String, Object>> selectAll() {
-		return sqlSession.selectList("recentlylist.selectAll");
+	public List<Map<String, Object>> selectAll(Integer count) {
+		return sqlSession.selectList("recentlylist.selectAll", count);
 	}
 
 }
