@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.hanbit.sp.exception.SooException;
 import com.hanbit.sp.service.MemberService;
 
 @Controller
@@ -22,27 +23,33 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 	
+	//회원가입//
 	@RequestMapping(value="/api2/member/signup", method=RequestMethod.POST)
 	@ResponseBody
-	public Map signup(@RequestParam("userId") String userId, @RequestParam("userPw") String userPw) {
+	public Map signup(@RequestParam("userId") String userId,
+			@RequestParam("userPw") String userPw) {
 		if(StringUtils.isBlank(userId)) {
-			throw new RuntimeException("아이디가 잘못 입력되었습니다.");
+			throw new SooException("아이디가 잘못 입력되었습니다.", "WRONG_ID");
 		}
 		else if(StringUtils.isBlank(userPw)) {
-			throw new RuntimeException("비밀번호가 잘못 입력되었습니다.");
+			throw new SooException("비밀번호가 잘못 입력되었습니다.", "WRONG_PW");
 		}
-		System.out.println("check controller signup -");
+		else if(memberService.countUserId(userId) != 0) {
+			throw new SooException("이미 가입된 이메일 주소입니다.", "ALREADY_SIGNUP");
+		}
 		
 		String uid = memberService.addMember(userId, userPw);
-				
+		
 		Map result = new HashMap();
 		result.put("result", "ok");
 		result.put("uid", uid);
 		
+		System.out.println("check controller signup -");
+
 		return result;
 	}
 	
-	
+	//로그인//
 	@RequestMapping(value="/api2/member/signin", method=RequestMethod.POST)
 	@ResponseBody
 	public Map signin(@RequestParam("userId") String userId,
@@ -51,11 +58,11 @@ public class MemberController {
 		
 		try {
 			if(!memberService.isValidMember(userId, userPw)) {
-				throw new RuntimeException("패스워드가 다릅니다.");
+				throw new RuntimeException("비밀번호가 일치하지 않습니다.");
 			}
 		}
 		catch (NullPointerException e) {
-			throw new RuntimeException("가입되지 않은 사용자입니다.");
+			throw new RuntimeException("가입된 이메일 주소가 아닙니다.");
 		}
 		
 		HttpSession session = request.getSession();
@@ -72,6 +79,7 @@ public class MemberController {
 		return result;
 	}
 	
+	//로그인상태//
 	@RequestMapping("/api2/member/signedin")
 	@ResponseBody
 	public Map signedin(HttpSession session) {
@@ -91,7 +99,7 @@ public class MemberController {
 		return result;
 	}
 	
-
+	//업데이트//
 	@RequestMapping(value="/api2/member/update", method=RequestMethod.POST)
 	@ResponseBody
 	public Map update(@RequestParam("userPw") String userPw,
@@ -111,7 +119,7 @@ public class MemberController {
 		return result;
 	}
 	
-	
+	//로그아웃//
 	@RequestMapping("/api2/member/signout")
 	@ResponseBody
 	public Map signout(HttpSession session) {

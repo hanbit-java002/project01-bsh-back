@@ -40,4 +40,7 @@ public class MemberDAO {
 		return sqlSession.selectOne("member.selectUid", userId);
 	}
 	
+	public int countUserId(String userId) {
+		return sqlSession.selectOne("member.countUserId", userId);
+	}
 }
