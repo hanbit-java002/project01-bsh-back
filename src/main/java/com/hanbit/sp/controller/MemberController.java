@@ -58,11 +58,11 @@ public class MemberController {
 		
 		try {
 			if(!memberService.isValidMember(userId, userPw)) {
-				throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+				throw new SooException("비밀번호가 일치하지 않습니다.", "WRONG_PW");
 			}
 		}
 		catch (NullPointerException e) {
-			throw new RuntimeException("가입된 이메일 주소가 아닙니다.");
+			throw new SooException("가입된 이메일 주소가 아닙니다.", "NULL_ID");
 		}
 		
 		HttpSession session = request.getSession();
@@ -77,6 +77,22 @@ public class MemberController {
 		result.put("result", "ok");
 		
 		return result;
+	}
+	
+	//비밀번호 찾기//
+	@RequestMapping(value="/api2/member/findpw", method=RequestMethod.POST)
+	@ResponseBody
+	public Map findpw(@RequestParam("userId") String userId) {
+		
+		if(memberService.countUserId(userId) != 0) {
+			throw new SooException("가입된 이메일 주소가 아닙니다.", "NULL_ID");
+		}
+		else {
+			Map result = new HashMap();
+			result.put("result", "ok");
+			
+			return result;
+		}	
 	}
 	
 	//로그인상태//
